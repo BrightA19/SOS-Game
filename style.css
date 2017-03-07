@@ -1,4 +1,5 @@
 body {
+    background: #DDF;
     transition: 0.5s background;
 }
 

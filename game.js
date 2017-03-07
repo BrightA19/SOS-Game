@@ -48,6 +48,8 @@
       player[i].lineDir = [];
     }
     
+    
+    
     // Start game loop
     start();
     
