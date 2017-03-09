@@ -1,8 +1,7 @@
 (function () {
   
-  var display;
-  
   // Initialize variables
+  var display;            // Display variable
   var cvs = null;         // Canvas variable
   var mouse = [];         // [x, y, mousedown(true/false)]
   var mouseP = false;     // Previous state of mousedown
@@ -15,10 +14,12 @@
   
   function init() {
     
-    // Set cvs and ctx variables
+    // Set cvs to canvas in document
     cvs = document.getElementById("c");
     
+    // Set display to object "Display" in display.js
     display = new Display(cvs);
+    
     
     // Add mousedown event listener to modify mouse variable (puts coords)
     cvs.addEventListener("mousedown", function (e) {
@@ -39,6 +40,7 @@
       ];
     });
     
+    
     // Set properties for players
     for (var i in player) {
       var I = Number(i);
@@ -50,7 +52,6 @@
     }
     
     
-    
     // Start game loop
     start();
     
@@ -58,16 +59,16 @@
   
   function start() {
   
-    var x, y, i;
+    var x, y;
     
     // If NOT zero, increase
     if (frame) frame++;
     
     // Determine box clicked in, and if double clicked
     for (x = 0; x < 9; x++) {
-      for (var i = 0; i < 9; i++) {
+      for (y = 0; y < 9; y++) {
         
-        var box = {x: (25+(x*50)), y: (25+(i*50))}; // w=50, h=50
+        var box = {x: (25+(x*50)), y: (25+(y*50))}; // w=50, h=50
         box.color = player[turn].color;
         
         // Detect the box that was clicked in
@@ -149,6 +150,7 @@
       frame = 0;
     }
     
+    // Update display
     display.update(data, player, turn);
     
     // Set the previous mouse state to mouseP
@@ -430,6 +432,7 @@
     }
     
   }
+  
   
   init();
   
