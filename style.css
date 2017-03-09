@@ -3,10 +3,25 @@ body {
     transition: 0.5s background;
 }
 
+#title {
+    font-family: Helvetica, arial;
+    text-align: center;
+    animation: animate 2s linear infinite;
+    color: white;
+}
+
 #c {
     display: block;
     width: 500px;
     height: 500px;
     margin: 10px auto;
     box-shadow: 0px 0px 10px #DDD
+}
+
+@keyframes animate {
+    0% {text-shadow: -5px 0px 5px #888;}
+    25% {text-shadow: 0px -5px 5px #888;}
+    50% {text-shadow: 5px 0px 5px #888;}
+    75% {text-shadow: 0px 5px 5px #888;}
+    100% {text-shadow: -5px 0px 5px #888;}
 }
