@@ -1,13 +1,13 @@
 (function () {
   
+  var display;
+  
   // Initialize variables
   var cvs = null;         // Canvas variable
-  var ctx = null;         // Context of canvas
   var mouse = [];         // [x, y, mousedown(true/false)]
   var mouseP = false;     // Previous state of mousedown
   var frame = 0;          // Frames (used at specific times)
   var turn = 0;           // Whose turn is it?
-  var turnP = 1;          // Previous state of turn variable
   var player = [{},{}];   // Two players
   var data = [];          // Contains [x, y, ("S" or "O"), color] arrays
   var boxExists = false;  // If there already is an "S" or "O"
@@ -17,7 +17,8 @@
     
     // Set cvs and ctx variables
     cvs = document.getElementById("c");
-    ctx = cvs.getContext("2d");
+    
+    display = new Display(cvs);
     
     // Add mousedown event listener to modify mouse variable (puts coords)
     cvs.addEventListener("mousedown", function (e) {
@@ -58,52 +59,6 @@
   function start() {
   
     var x, y, i;
-    
-    // Clear screen
-    ctx.clearRect(0, 0, 500, 500);
-    
-    // Create background
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, 500, 500);
-    
-    // Create lines
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    for (x = 0; x < 10; x++) {
-      ctx.beginPath();
-      ctx.moveTo((x+0.5)*50, 0);
-      ctx.lineTo((x+0.5)*50, 500);
-      ctx.closePath();
-      ctx.stroke();
-    }
-    for (x = 0; x < 10; x++) {
-      ctx.beginPath();
-      ctx.moveTo(0, (x+0.5)*50);
-      ctx.lineTo(500, (x+0.5)*50);
-      ctx.closePath();
-      ctx.stroke();
-    }
-    
-    // Show Player Names
-    ctx.fillRect(0, 0, 500, 24);
-    ctx.font = "15px Arial";
-    for (x in player) {
-      i = (Number(x)) ? 490 : 10;
-      ctx.textAlign = (Number(x)) ? "right" : "left";
-      ctx.fillStyle = player[x].color;
-      ctx.fillText(player[x].name, i, 15);
-    }
-    
-    // Show Player Scores
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#000000";
-    ctx.fillText(player[0].score + "  -  " + player[1].score, 250, 15);
-    
-    // Whose turn is it?
-    x = (turn) ? 250 : 0;
-    ctx.fillStyle = player[turn].color;
-    ctx.fillRect(x, 21, 250, 3);
-    
     
     // If NOT zero, increase
     if (frame) frame++;
@@ -179,10 +134,6 @@
         }
         else goAgain = false;
         
-        // Match background color to player's turn 
-        if (turn) document.body.style.background = "#FDD";
-        else document.body.style.background = "#DDF";
-        
       }
       else {
         console.info("Choose another!");
@@ -197,83 +148,8 @@
       // Will not increase anymore if set to zero
       frame = 0;
     }
-  
     
-    // Draw S and O in their boxes
-    for (x in data) {
-      ctx.fillStyle = data[x].color;
-      ctx.textAlign = "center";
-      ctx.font = "40px 'Comic Sans MS'";
-      ctx.fillText(data[x].letter, data[x].x + 25, data[x].y + 40);
-    }
-    // Draw lines
-    for (x in player) {
-      for (y in player[x].lineDir) {
-        
-        ctx.strokeStyle = player[x].color;
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        
-        for (i in player[x].lineDir[y].dir) {
-          switch (player[x].lineDir[y].dir[i]) {
-            
-            case 1:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+125);
-              break;
-            case 2:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x-75, player[x].lineDir[y].box.y+125);
-              break;
-            case 3:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x-75, player[x].lineDir[y].box.y+25);
-              break;
-            case 4:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x-75, player[x].lineDir[y].box.y-75);
-              break;
-            case 5:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y-75);
-              break;
-            case 6:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x+125, player[x].lineDir[y].box.y-75);
-              break;
-            case 7:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x+125, player[x].lineDir[y].box.y+25);
-              break;
-            case 8:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x+125, player[x].lineDir[y].box.y+125);
-              break;
-            case 9:
-              ctx.moveTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y-25);
-              ctx.lineTo(player[x].lineDir[y].box.x+25, player[x].lineDir[y].box.y+75);
-              break;
-            case 10:
-              ctx.moveTo(player[x].lineDir[y].box.x-25, player[x].lineDir[y].box.y+25);
-              ctx.lineTo(player[x].lineDir[y].box.x+75, player[x].lineDir[y].box.y+25);
-              break;
-            case 11:
-              ctx.moveTo(player[x].lineDir[y].box.x-25, player[x].lineDir[y].box.y-25);
-              ctx.lineTo(player[x].lineDir[y].box.x+75, player[x].lineDir[y].box.y+75);
-              break;
-            case 12:
-              ctx.moveTo(player[x].lineDir[y].box.x-25, player[x].lineDir[y].box.y+75);
-              ctx.lineTo(player[x].lineDir[y].box.x+75, player[x].lineDir[y].box.y-25);
-              break;
-              
-          }
-        }
-        
-        ctx.closePath();
-        ctx.stroke();
-      }
-    }
-    
+    display.update(data, player, turn);
     
     // Set the previous mouse state to mouseP
     mouseP = mouse[0];
